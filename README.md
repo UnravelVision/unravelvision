@@ -53,10 +53,14 @@ Luego abre `http://localhost:8787/`.
 ## Diseño
 
 - **Paleta (orden de predominancia):** primero los dos morados (`#8c52ff` y `#5e17eb`) como base del sitio, en segundo lugar el blanco (tarjetas, botones, píldoras y texto sobre morado) y en tercer lugar el negro, que solo aparece como tinta de texto dentro de las superficies blancas.
-- **Tema morado:** todo el reequilibrio vive en el bloque `TEMA MORADO` al final de `assets/css/styles.css`. Ahí se redefinen los tokens de fondo, los textos sobre morado, el header (logo blanco) y las tarjetas. Para volver a un esquema más claro basta con quitar ese bloque.
+- **Tema morado:** el reequilibrio vive en el bloque `TEMA MORADO` al final de `assets/css/styles.css` (tokens de fondo, textos sobre morado, header con logo blanco y tarjetas).
+- **Menos cajas:** sobre ese tema hay un segundo bloque, `MENOS CAJAS + TEXTURA + INTERACCIONES`. Ahí las retículas de texto (disciplinas, proceso, talleres, equipo, principios, notas de contacto) dejaron de ser tarjetas blancas y pasaron a ser columnas abiertas con líneas finas. El blanco quedó para botones, píldoras y etiquetas, y las imágenes de proyecto y el demo reel van sin marco, solo con sombra y esquinas redondeadas.
 - **Ilustración de portada:** el símbolo redondo del logo (`logo-mark-white.png`) ocupa el centro del panel, con anillos, retícula y píldoras alrededor. Antes era una esfera generada con CSS.
+- **Textura de fondo:** retícula fina enmascarada, grano suave y viñeta, hechos con CSS y un SVG en línea (`body::before`, `body::after` y `html::after`). Son detalles de baja opacidad que no interfieren con la lectura.
+- **Fundadores:** la fotografía (`fundadores.jpg`, 3:2 en `object-fit: cover`, con degradado al morado para que la etiqueta se lea bien) va en la sección *Origen* y la ilustración (`equipo.png`, PNG transparente) acompaña el encabezado de *Quiénes somos*. Las dos versiones conviven, cada una en su lugar.
 - **Tipografías:** Space Grotesk (títulos) e Inter (texto).
-- **Recursos:** retículas geométricas, numeración de secciones, formas 3D/orgánicas en CSS, animaciones suaves de aparición y respeto por `prefers-reduced-motion`.
+- **Interacciones:** barra de progreso de lectura, foco que sigue al cursor en la portada, inclinación leve en las tarjetas de proyecto, botones con seguimiento suave del cursor, brillo al pasar el mouse, subrayado animado en enlaces y latido del punto en las secciones. Todo se desactiva con `prefers-reduced-motion` o con punteros táctiles.
+- **Recursos:** retículas geométricas, numeración de secciones, formas orgánicas en CSS y animaciones suaves de aparición.
 - **Accesibilidad:** enlace "saltar al contenido", foco visible, contraste AAA en texto, `aria-label` en navegación e iconos, y menú móvil operable con teclado (Escape para cerrar).
 
 Auditorías con Lighthouse: **Accesibilidad 1.0 · Buenas prácticas 1.0 · SEO 1.0** en las páginas revisadas.
@@ -68,6 +72,8 @@ Auditorías con Lighthouse: **Accesibilidad 1.0 · Buenas prácticas 1.0 · SEO 
 - `Don't Hug Me I'm Scared VR` se declara explícitamente como **fanmade y sin fines comerciales**, y no afiliado a los creadores de la serie.
 - La simulación de primeros auxilios aclara que **no reemplaza una certificación profesional**.
 - Los proyectos provienen del canal de YouTube `@UnravelVision` (miniaturas descargadas a `assets/img/proyectos/`).
+- `proyectos.html` muestra cinco proyectos: **Ecos de Valdivia, Planetario VR, Museo inmersivo, Guardianes del Mito y Don't Hug Me I'm Scared VR**. Los filtros corresponden a esas categorías (realidad virtual, videojuegos, juegos de mesa y cultural).
+- La ficha del **Museo inmersivo** incluye una **convocatoria abierta** a artistas locales (pequeños y grandes) para prestar sus obras y exhibirlas en el espacio virtual, con llamados a la acción a `contacto.html` y a Beacons.
 
 ## Personalización rápida
 
@@ -77,7 +83,8 @@ Auditorías con Lighthouse: **Accesibilidad 1.0 · Buenas prácticas 1.0 · SEO 
 | Logo del encabezado, del pie y del menú móvil | `assets/img/logo-white.png` (versión blanca, para fondos morados) |
 | Símbolo redondo de la portada | `assets/img/logo-mark-white.png` |
 | Favicon | `assets/img/favicon.png` |
-| Foto de los fundadores | `assets/img/equipo.png` |
+| Foto de los fundadores | `assets/img/fundadores.jpg` (versión optimizada, 1600 px de ancho) |
+| Ilustración de los fundadores | `assets/img/equipo.png` |
 | Textos | Directamente en cada `.html` |
 | Redes sociales | En el pie, el menú móvil y `contacto.html` |
 
@@ -86,9 +93,13 @@ Los logos originales (variantes A–F) siguen en la raíz del proyecto por si pr
 
 ## Pendientes sugeridos
 
-1. **Correo de contacto:** hoy no se publica uno. Si lo tienes, se agrega en `contacto.html` y en el pie de todas las páginas.
-2. **Formulario de contacto:** al ser un sitio estático, requiere un servicio externo (Formspree, Netlify Forms o similar). Se puede integrar cuando definas el correo de destino.
+1. **Correo de contacto:** es `unravelvisioncontact@gmail.com` y ya aparece en el canal de correo y en la nota "Dónde estamos" de `contacto.html`, además del formulario y el pie de las páginas.
+2. **Formulario de contacto:** está construido en `contacto.html` (`#formulario`) y **ya conectado a Formspree** (`action="https://formspree.io/f/xyekqwdl"`), con validación en el navegador y estilos propios. Al enviar, los mensajes llegan al correo con el que se creó ese formulario en Formspree, sin recargar la página.
+   - Si algún día cambias de servicio: reemplaza la URL del `action` del `<form data-contact-form>`. Alternativas: **Netlify Forms** (agregar `netlify` y `name="contacto"` al `<form>`, sin `action`), **Web3Forms** o **EmailJS** con clave pública.
+   - Si el `action` queda vacío, el formulario **no finge** un envío: valida los campos y muestra un aviso con las alternativas (correo y Beacons).
+   - Para evitar spam, Formspree tiene su propio filtro; si aparece basura, se puede activar reCAPTCHA desde el panel de Formspree.
 3. **Más material visual:** renders, capturas de pantalla o fotos de procesos para reemplazar las miniaturas de YouTube en las fichas.
 4. **Proyectos no incluidos:** Textil 4.0, Runka y Happy Bee / Tu Aventura Dental (mencionados en el brief) no se publicaron porque el usuario indicó mostrar los del canal. Se pueden sumar como fichas o como "líneas de trabajo".
 5. **Versión en inglés** y **dominio propio** (para agregar `canonical`, `sitemap.xml` y `og:url` absolutos).
 6. **Analítica** (si la necesitas) y verificación de Google Search Console.
+7. **Fichas archivadas:** `proyectos/primeros-auxilios.html`, `proyectos/through-the-deep.html`, `proyectos/tide-and-trinket.html` y `proyectos/laboratorio-inmersivo.html` siguen en disco y se siguen entre ellas, pero ya no se enlazan desde el sitio (quedaron fuera de la lista pública). Se pueden borrar o volver a publicar cuando quieras.

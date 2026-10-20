@@ -105,6 +105,19 @@
               <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
             </a>
 
+            <a class="channel reveal" href="mailto:unravelvisioncontact@gmail.com">
+              <div class="channel__left">
+                <span class="channel__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>
+                </span>
+                <div>
+                  <strong>Correo</strong>
+                  <span>unravelvisioncontact@gmail.com</span>
+                </div>
+              </div>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+
             <a class="channel reveal" href="https://www.instagram.com/unravelvision/" target="_blank" rel="noopener">
               <div class="channel__left">
                 <span class="channel__icon">
@@ -158,10 +171,59 @@
             </a>
           </div>
 
-          <p class="lead reveal" style="margin-top:22px;font-size:0.9rem;max-width:66ch;">No publicamos un correo directo todavía. El enlace de Beacons reúne todos los canales oficiales del estudio y se mantiene actualizado.</p>
+          <p class="lead reveal" style="margin-top:22px;font-size:0.9rem;max-width:66ch;">Escríbenos a <a href="mailto:unravelvisioncontact@gmail.com">unravelvisioncontact@gmail.com</a> o usa el formulario. El enlace de Beacons reúne todos los canales oficiales del estudio.</p>
         </div>
 
         <div>
+          <section class="contact-form reveal" id="formulario" aria-labelledby="formulario-titulo">
+            <h2 id="formulario-titulo">Escríbenos</h2>
+            <!-- Para activar el envío automático, pega aquí la URL del servicio (por ejemplo
+                 https://formspree.io/f/tu-id) siguiendo el paso a paso del README. -->
+            <form class="form-grid" data-contact-form action="https://formspree.io/f/xyekqwdl" method="post">
+              <div class="field">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Cómo te llamas" required>
+              </div>
+              <div class="field">
+                <label for="correo">Correo</label>
+                <input id="correo" name="correo" type="email" autocomplete="email" placeholder="tu@correo.cl" required>
+              </div>
+              <div class="field">
+                <label for="organizacion">Organización <span style="text-transform:none;letter-spacing:0;">(opcional)</span></label>
+                <input id="organizacion" name="organizacion" type="text" autocomplete="organization" placeholder="Institución, equipo o empresa">
+              </div>
+              <div class="field">
+                <label for="tipo">Tipo de proyecto</label>
+                <select id="tipo" name="tipo" required>
+                  <option value="" selected disabled>Elige una opción</option>
+                  <option>Videojuego o experiencia interactiva</option>
+                  <option>Realidad virtual o aumentada</option>
+                  <option>Página o aplicación web</option>
+                  <option>Taller o formación</option>
+                  <option>Colaboración con el museo</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="plazo">Plazo estimado <span style="text-transform:none;letter-spacing:0;">(opcional)</span></label>
+                <input id="plazo" name="plazo" type="text" placeholder="Por ejemplo: segundo semestre">
+              </div>
+              <div class="field">
+                <label for="presupuesto">Presupuesto <span style="text-transform:none;letter-spacing:0;">(opcional)</span></label>
+                <input id="presupuesto" name="presupuesto" type="text" placeholder="Rango o referencia, si ya lo tienes">
+              </div>
+              <div class="field field--full">
+                <label for="mensaje">Cuéntanos del proyecto</label>
+                <textarea id="mensaje" name="mensaje" placeholder="Qué necesitas, para quién es, en qué contexto y qué te gustaría lograr." required></textarea>
+              </div>
+              <div class="field field--full">
+                <button class="btn btn--primary" type="submit">Enviar mensaje</button>
+                <p class="form-hint">También puedes escribirnos directo a <a href="mailto:unravelvisioncontact@gmail.com">unravelvisioncontact@gmail.com</a>. Guardamos tus datos solo para responder tu mensaje.</p>
+                <p class="form-status" role="status" aria-live="polite" data-form-status></p>
+              </div>
+            </form>
+          </section>
+        </div>
           <div class="contact-note reveal">
             <h2>Dónde estamos</h2>
             <p>Valdivia, Región de Los Ríos, Chile. La modalidad de trabajo se define según el proyecto y las condiciones de cada institución.</p>
@@ -172,7 +234,7 @@
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>
-                Contacto inicial por redes o Beacons
+                <a href="mailto:unravelvisioncontact@gmail.com">unravelvisioncontact@gmail.com</a>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
