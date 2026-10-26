@@ -1,0 +1,8 @@
+# Archivos grandes / no necesarios para el sitio publicado
+DHMIS 360/
+fundadores.jpg
+assets/video/
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -22,6 +22,12 @@ UnravelVision/
 │  ├─ tide-and-trinket.html
 │  ├─ dont-hug-me.html
 │  └─ laboratorio-inmersivo.html
+├─ dhmis/                  App 360° (Three.js) incrustada en la ficha de Don't Hug Me I'm Scared
+│  ├─ index.html
+│  ├─ app.js, style.css
+│  ├─ data/scenes.js       Escenas y hotspots (editable)
+│  ├─ lib/three.min.js
+│  └─ 1 escenario (cocina)/, 2 escenario (tiempo)/   Panoramas equirectangulares
 └─ assets/
    ├─ css/styles.css       Sistema de diseño completo
    ├─ js/main.js           Menú, animaciones, filtros, año
@@ -69,7 +75,9 @@ Auditorías con Lighthouse: **Accesibilidad 1.0 · Buenas prácticas 1.0 · SEO 
 
 - No se inventaron clientes, premios, métricas, ingresos, certificaciones ni funcionalidades.
 - Cada proyecto muestra su **estado real** (prototipo, en expansión, fanmade, en planificación).
-- `Don't Hug Me I'm Scared VR` se declara explícitamente como **fanmade y sin fines comerciales**, y no afiliado a los creadores de la serie.
+- **Don't Hug Me I'm Scared VR** es fanmade y sin fines comerciales, y no está afiliado a los creadores de la serie.
+- La ficha incluye una **experiencia 360° incrustada** (Three.js) en `dhmis/`, servida por el mismo sitio y con botón de pantalla completa propio. La app se ajustó para renderizar bien dentro de un iframe (render al cargar la textura y bucle robusto), así que funciona aunque el navegador acelere la animación. Las rutas de los panoramas se simplificaron (sin espacios ni paréntesis) para que funcionen en cualquier hosting. Las escenas y hotspots se editan en `dhmis/data/scenes.js`.
+- **Importante:** la panorámica 360° solo se ve si el sitio se sirve por HTTP/HTTPS (servidor local o hosting). Si se abre con doble clic (`file://`), el navegador bloquea la carga de la imagen por seguridad y la app muestra un aviso. Usa `serve.ps1` (o sube el sitio a tu hosting) para verla.
 - La simulación de primeros auxilios aclara que **no reemplaza una certificación profesional**.
 - Los proyectos provienen del canal de YouTube `@UnravelVision` (miniaturas descargadas a `assets/img/proyectos/`).
 - `proyectos.html` muestra cinco proyectos: **Ecos de Valdivia, Planetario VR, Museo inmersivo, Guardianes del Mito y Don't Hug Me I'm Scared VR**. Los filtros corresponden a esas categorías (realidad virtual, videojuegos, juegos de mesa y cultural).

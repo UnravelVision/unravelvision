@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Don't Hug Me I'm Scared - Recorrido 360° | Unravel Vision</title>
+  <link rel="icon" type="image/png" href="recursos/logo.png">
+
+  <!-- Tipografías retro y caricaturescas estilo DHMIS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Titan+One&family=Permanent+Marker&family=VT323&display=swap" rel="stylesheet">
+
+  <!-- Iconos FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Contenedor Principal 360 -->
+  <div id="viewer-container">
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Contenedor de Hotspots proyectados 2D en pantalla -->
+    <div id="hotspots-layer" aria-live="polite"></div>
+
+    <!-- Efecto Vignette / CRT sutil de show infantil vintage -->
+    <div class="retro-overlay"></div>
+  </div>
+
+  <!-- Encabezado / Barra Superior con logos y branding -->
+  <header class="top-nav">
+    <!-- Logotipo Don't Hug Me I'm Scared -->
+    <div class="dhmis-branding" title="Don't Hug Me I'm Scared - Experiencia Interactiva">
+      <div class="dhmis-badge-title">
+        <span>DON'T HUG ME</span>
+        <span>I'M SCARED</span>
+      </div>
+      <span class="fanmade-tag">PROYECTO FANMADE</span>
+    </div>
+
+    <!-- Selector de Habitación / Estado -->
+    <div class="scene-indicator">
+      <div class="calendar-pill" title="19 de Junio - La fecha eterna">
+        <i class="fa-regular fa-calendar-days"></i>
+        <span>19 JUN</span>
+      </div>
+      
+      <!-- Selector desplegable automático de habitaciones -->
+      <div class="room-selector-wrapper" id="room-selector-wrapper">
+        <button class="room-pill clickable" id="current-room-btn" title="Haz clic para cambiar de habitación" aria-expanded="false">
+          <i class="fa-solid fa-door-open"></i>
+          <span id="room-name-display">La Cocina</span>
+          <i class="fa-solid fa-chevron-down room-chevron"></i>
+        </button>
+
+        <div class="room-dropdown" id="room-dropdown">
+          <div class="dropdown-header">
+            <i class="fa-solid fa-signs-post"></i>
+            <span>HABITACIONES</span>
+          </div>
+          <div class="dropdown-list" id="room-dropdown-list">
+            <!-- Se genera AUTOMÁTICAMENTE según data/scenes.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logotipo Unravel Vision -->
+    <div class="unravel-branding">
+      <div class="unravel-text">
+        <span class="dev-by">PRODUCIDO POR</span>
+        <span class="brand-title">UNRAVEL VISION</span>
+      </div>
+      <img src="recursos/logo.png" alt="Logo Unravel Vision" class="unravel-logo-img">
+    </div>
+  </header>
+
+  <!-- Brújula / Retícula central discreta opcional -->
+  <div class="view-crosshair" id="crosshair"></div>
+
+  <!-- Barra de Herramientas Inferior (HUD) -->
+  <nav class="bottom-toolbar" aria-label="Controles del recorrido">
+    <div class="toolbar-inner">
+      <button class="tool-btn" id="btn-zoom-in" title="Acercar (+)" aria-label="Acercar">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <button class="tool-btn" id="btn-zoom-out" title="Alejar (-)" aria-label="Alejar">
+        <i class="fa-solid fa-minus"></i>
+      </button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" id="btn-reset-view" title="Centrar Vista (Espacio)" aria-label="Centrar vista">
+        <i class="fa-solid fa-crosshairs"></i>
+      </button>
+      <button class="tool-btn" id="btn-autorotate" title="Giro Automático" aria-label="Giro automático">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+      <button class="tool-btn" id="btn-gyro" title="Giroscopio (Teléfonos/Tablets)" aria-label="Giroscopio">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" id="btn-sound" title="Sonido (Efectos)" aria-label="Sonido">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
+      <button class="tool-btn highlight-rooms" id="btn-rooms-menu" title="Cambiar de Sala" aria-label="Cambiar de sala">
+        <i class="fa-solid fa-door-open"></i>
+        <span class="btn-label">Salas</span>
+      </button>
+      <button class="tool-btn highlight" id="btn-hotspots-menu" title="Lista de Objetos" aria-label="Lista de objetos">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span class="btn-label">Objetos</span>
+      </button>
+      <button class="tool-btn" id="btn-fullscreen" title="Pantalla Completa" aria-label="Pantalla completa">
+        <i class="fa-solid fa-expand"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Panel Lateral / Menú de Objetos y Habitaciones del Escenario -->
+  <aside class="hotspots-drawer" id="hotspots-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <i class="fa-solid fa-house"></i>
+        <span id="drawer-room-title">La Cocina</span>
+      </div>
+      <button class="close-drawer-btn" id="close-drawer-btn" aria-label="Cerrar panel">&times;</button>
+    </div>
+
+    <!-- Sección de Habitaciones -->
+    <div class="drawer-section-heading">
+      <i class="fa-solid fa-door-open"></i>
+      <span>HABITACIONES</span>
+    </div>
+    <ul class="drawer-rooms-list" id="drawer-rooms-list">
+      <!-- Generado automáticamente -->
+    </ul>
+
+    <!-- Sección de Objetos -->
+    <div class="drawer-section-heading">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>OBJETOS INTERACTIVOS</span>
+    </div>
+    <ul class="drawer-list" id="drawer-items-list">
+      <!-- Generado dinámicamente -->
+    </ul>
+  </aside>
+
+  <!-- Ventana Modal Sobrepuesta al Entorno 360 (Overlay Modal) -->
+  <div class="modal-backdrop" id="info-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <!-- Cinta decorativa superior -->
+      <div class="modal-tape modal-tape-tl"></div>
+      <div class="modal-tape modal-tape-tr"></div>
+      
+      <div class="modal-header">
+        <div class="modal-eyebrow">
+          <span class="modal-badge-cat" id="modal-category">MAESTRO DE LECCIÓN</span>
+          <span class="modal-badge-date">19 DE JUNIO</span>
+        </div>
+        <button class="modal-close-btn" id="modal-close-btn" title="Cerrar ventana" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Columna de Imagen / Foto Polaroid -->
+        <div class="modal-image-col">
+          <div class="polaroid-frame">
+            <div class="polaroid-pin"></div>
+            <img src="" alt="" id="modal-image" class="polaroid-img">
+            <div class="polaroid-caption" id="modal-image-caption">FICHA #01</div>
+          </div>
+          <!-- Advertencia cómica sobre el verde -->
+          <div class="creative-warning" id="modal-warning-box">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="modal-warning-text">El verde NO es un color creativo.</span>
+          </div>
+        </div>
+
+        <!-- Columna de Información y Descripción -->
+        <div class="modal-info-col">
+          <h2 class="modal-title" id="modal-title">La Libreta</h2>
+          <p class="modal-subtitle" id="modal-subtitle">Maestra de la Creatividad • Episodio 1</p>
+
+          <!-- Cita célebre estilo bocadillo de cómic -->
+          <blockquote class="dhmis-quote" id="modal-quote-box">
+            <i class="fa-solid fa-quote-left quote-icon"></i>
+            <span id="modal-quote-text">What's your favorite idea? Mine is being creative!</span>
+          </blockquote>
+
+          <!-- Texto descriptivo con scroll amigable -->
+          <div class="modal-description-scroll" id="modal-description">
+            <!-- Cargado dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-credit">
+          <img src="recursos/logo.png" alt="Unravel Vision" class="footer-mini-logo">
+          <span>Unravel Vision • Archivo DHMIS</span>
+        </div>
+        <button class="dhmis-action-btn" id="modal-ok-btn">
+          <span>¡ENTENDIDO!</span>
+          <i class="fa-solid fa-check"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla de Bienvenida / Splash Screen -->
+  <div class="splash-screen" id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-confetti"></div>
+
+      <!-- Banner de Logos -->
+      <div class="splash-header-logos">
+        <img src="recursos/logo.png" alt="Unravel Vision" class="splash-unravel-logo">
+      </div>
+
+      <h1 class="splash-title">
+        <span>DON'T HUG ME</span>
+        <span class="splash-red-text">I'M SCARED</span>
+      </h1>
+      <p class="splash-subtitle">EXPERIENCIA PANORÁMICA 360° • PROYECTO FANMADE</p>
+
+      <div class="splash-features">
+        <div class="feature-item">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i>
+          <div>
+            <strong>Navegación 360°</strong>
+            <p>Arrastra con el mouse o desliza el dedo en tu pantalla táctil.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <i class="fa-solid fa-hand-pointer"></i>
+          <div>
+            <strong>Objetos Interactivos</strong>
+            <p>Toca los círculos pulsantes para descubrir a los maestros y secretos.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <i class="fa-solid fa-vr-cardboard"></i>
+          <div>
+            <strong>Móvil y Tablet</strong>
+            <p>Compatible con giroscopio y gestos de pellizco para hacer zoom.</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="splash-start-btn" id="splash-start-btn" onclick="if(window.dhmisApp){window.dhmisApp.dismissSplash()}else{var s=document.getElementById('splash-screen');if(s){s.classList.add('hidden');s.style.display='none';}}">
+        <span class="btn-text">ENTRAR A LA COCINA</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+      <div class="splash-disclaimer">
+        <span>Diseño e interactividad por <strong>Unravel Vision</strong>. Basado en la serie creada por Becky Sloan & Joseph Pelling.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificación Toast flotante -->
+  <div class="toast-notification" id="toast-notification"></div>
+
+  <!-- Scripts: Three.js local + Configuración + Aplicación -->
+  <script src="lib/three.min.js"></script>
+  <script src="data/scenes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
