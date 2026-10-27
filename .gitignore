@@ -1,7 +1,9 @@
 # Archivos grandes / no necesarios para el sitio publicado
 DHMIS 360/
 fundadores.jpg
-assets/video/
+assets/video/*
+!assets/video/video-360.mp4
+!assets/video/video-360.webm
 
 # Sistema
 .DS_Store

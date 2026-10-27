@@ -174,6 +174,76 @@
 
 
 
+    </section>
+
+    <!-- ====================================================================
+         VIDEO 360° (A-Frame) — bloque independiente, fácil de quitar
+         ==================================================================== -->
+    <section class="section section--tight" id="video-360">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-head__top">
+            <span class="index">Video</span>
+            <span class="eyebrow">360° panorámico</span>
+          </div>
+          <h2>Video inmersivo en 360°.</h2>
+          <p>Arrastra para mirar alrededor. El video se carga al presionar reproducir (el navegador puede bloquear la reproducción automática). En dispositivos compatibles, usa el botón "Enter VR" de A-Frame.</p>
+        </div>
+
+        <div class="video-360 reveal">
+          <div class="video-360__stage" id="video360-stage">
+            <a-scene
+              id="video360-scene"
+              embedded
+              loading-screen="enabled: false"
+              vr-mode-ui="enabled: true"
+              renderer="antialias: true; alpha: false"
+              background="color: #000">
+              <a-assets>
+                <video
+                  id="video360-src"
+                  data-src="../assets/video/video-360.mp4"
+                  crossorigin="anonymous"
+                  playsinline
+                  webkit-playsinline
+                  preload="none"
+                  loop
+                  muted>
+                </video>
+              </a-assets>
+              <a-videosphere
+                src="#video360-src"
+                rotation="0 0 0">
+              </a-videosphere>
+              <a-camera
+                look-controls="enabled: true"
+                wasd-controls="enabled: false"
+                position="0 0 0">
+              </a-camera>
+            </a-scene>
+          </div>
+          <div class="video-360__controls">
+            <button class="btn btn--primary" type="button" id="video360-play" aria-label="Reproducir video">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              Reproducir
+            </button>
+            <button class="btn btn--ghost" type="button" id="video360-pause" aria-label="Pausar video" hidden>
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+              Pausar
+            </button>
+            <p class="video-360__status" role="status" aria-live="polite" id="video360-status"></p>
+            <p class="video-360__note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5l3 2"/></svg>
+              <strong>Nota:</strong> el video debe ser un MP4 (H.264) de menos de 50 MB para web. Si el archivo pesa más, el navegador tardará mucho en cargarlo o no podrá reproducirlo. Renombra a <code>video-360.mp4</code> (sin espacios) y actualiza el <code>data-src</code> en el HTML. También puedes subir el video a YouTube/Vimeo y usar un iframe en su lugar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ====================================================================
+         FIN: Video 360° (A-Frame)
+         ==================================================================== -->
+
         <nav class="detail-nav" aria-label="Navegación entre proyectos">
           <a href="guardianes-del-mito.html">
             <span>Anterior</span>
@@ -239,5 +309,111 @@
   </footer>
 
   <script src="../assets/js/main.js"></script>
+
+  <!-- ========================================================================
+       VIDEO 360° (A-Frame) — bloque independiente, fácil de quitar
+       ======================================================================== -->
+  <script>
+    (function () {
+      "use strict";
+      var playBtn = document.getElementById("video360-play");
+      var pauseBtn = document.getElementById("video360-pause");
+      var statusEl = document.getElementById("video360-status");
+      var videoEl = document.getElementById("video360-src");
+      var sceneEl = document.getElementById("video360-scene");
+
+      if (!playBtn || !pauseBtn || !videoEl || !sceneEl) return;
+
+      var setStatus = function (msg, kind) {
+        if (!statusEl) return;
+        statusEl.textContent = msg || "";
+        statusEl.classList.remove("is-error", "is-ok");
+        if (kind) statusEl.classList.add(kind);
+      };
+
+      var isPlaying = false;
+
+      // Ruta configurable del video (cambiar aquí si se mueve el archivo)
+      var VIDEO_360_SRC = videoEl.getAttribute("data-src") || "../assets/video/video-360.mp4";
+
+      var play = function () {
+        // Lazy load: solo asigna el src la primera vez
+        if (!videoEl.getAttribute("src")) {
+          videoEl.setAttribute("src", VIDEO_360_SRC);
+        }
+        var p = videoEl.play();
+        if (p && typeof p.then === "function") {
+          p.then(function () {
+            isPlaying = true;
+            playBtn.hidden = true;
+            pauseBtn.hidden = false;
+            setStatus("Reproduciendo. Arrastra para mirar alrededor.", "is-ok");
+          }).catch(function (err) {
+            setStatus("No se pudo reproducir: " + (err && err.message ? err.message : "error desconocido") + ". Intenta con el botón de play del navegador o verifica el archivo.", "is-error");
+          });
+        } else {
+          isPlaying = true;
+          playBtn.hidden = true;
+          pauseBtn.hidden = false;
+          setStatus("Reproduciendo. Arrastra para mirar alrededor.", "is-ok");
+        }
+      };
+
+      var pause = function () {
+        videoEl.pause();
+        isPlaying = false;
+        playBtn.hidden = false;
+        pauseBtn.hidden = true;
+        setStatus("Pausado.", "");
+      };
+
+      playBtn.addEventListener("click", play);
+      pauseBtn.addEventListener("click", pause);
+
+      // Gestión de errores de carga
+      videoEl.addEventListener("error", function () {
+        var code = videoEl.error ? videoEl.error.code : 0;
+        var msg = "Error al cargar el video.";
+        if (code === 1) msg = "La carga del video fue abortada.";
+        else if (code === 2) msg = "Error de red al cargar el video.";
+        else if (code === 3) msg = "El video no se pudo decodificar (formato no soportado).";
+        else if (code === 4) msg = "El archivo de video no se encontró o no es compatible.";
+        setStatus(msg + " Verifica la ruta y el formato (MP4/H.264 recomendado).", "is-error");
+        playBtn.hidden = false;
+        pauseBtn.hidden = true;
+      });
+
+      videoEl.addEventListener("loadedmetadata", function () {
+        setStatus("Video listo. Presiona reproducir.", "is-ok");
+      });
+
+      // Cuando A-Frame esté listo, configurar el videosphere
+      if (sceneEl.hasLoaded) {
+        initVideo360();
+      } else {
+        sceneEl.addEventListener("loaded", initVideo360);
+      }
+
+      function initVideo360() {
+        // A-Frame ya inicializó la escena; el videosphere se vincula al video
+        // automáticamente por el src="#video360-src". No se requiere acción extra.
+        setStatus("Video listo. Presiona reproducir para comenzar.", "is-ok");
+      }
+
+      // WebXR / VR: A-Frame gestiona el botón "Enter VR" automáticamente
+      // si el dispositivo es compatible. No se requiere código adicional.
+      // Para forzar la detección, se puede consultar navigator.xr:
+      if (navigator.xr) {
+        navigator.xr.isSessionSupported("immersive-vr").then(function (supported) {
+          if (supported) {
+            setStatus("Dispositivo VR compatible detectado. Usa el botón 'Enter VR' de A-Frame.", "is-ok");
+          }
+        }).catch(function () {});
+      }
+    })();
+  </script>
+  <!-- ========================================================================
+       FIN: Video 360° (A-Frame)
+       ======================================================================== -->
 </body>
 </html>
